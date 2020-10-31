@@ -64,7 +64,8 @@ def train(args, device):
     accuracys.append(acc * 100)
     losses.append(loss)
     assert N_s/num_client > args.LocalIter * args.bs
-
+    weight_vec = [args.alfa for cl in range(num_client)]  ## subject of change
+    weight_vec = np.asarray(weight_vec)
     for epoch in tqdm(range(args.num_epoch)):
         atWarmup = (args.warmUp and epoch < 5)
         if atWarmup:
@@ -87,7 +88,6 @@ def train(args, device):
                     localIter +=1
                     if localIter == args.LocalIter:
                         break
-            weight_vec = [args.alfa for cl in range(num_client)]## subject of change
             if atWarmup:
                 weight_vec = np.asarray(weight_vec)
                 weight_vec[:] =1
@@ -111,6 +111,10 @@ def train(args, device):
         print(loss)
         if not atWarmup:
             [schedulers[cl].step() for cl in range(num_client)] ## adjust Learning rate
+        if epoch in args.lr_change:
+            lrs = np.asarray(args.lr_change)
+            ind = np.where(lrs == epoch)[0]
+            weight_vec[:] = args.alfaList[ind]
     return accuracys, losses
 
 

@@ -13,7 +13,8 @@ def args_parser():
     parser.add_argument('--numb_cls_usr', type=int, default=3, help='number of class per user if non_iid2 selected')
 
     # Federated params
-    parser.add_argument('--alfa', type=float, default=0.95, help='weigths ')
+    parser.add_argument('--alfa', type=float, default=0.99, help='weigths ')
+    parser.add_argument('--alfaList', type=list, default=[0.90,0], help='weigths ')
     parser.add_argument('--num_client', type=int, default=10, help='number of clients')
     parser.add_argument('--num_epoch', type=int, default=300, help='number of epochs')
     parser.add_argument('--LocalIter', type=int, default=5, help='communication workers')
