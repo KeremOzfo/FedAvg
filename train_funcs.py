@@ -113,7 +113,8 @@ def train(args, device):
             [schedulers[cl].step() for cl in range(num_client)] ## adjust Learning rate
         if epoch in args.lr_change:
             lrs = np.asarray(args.lr_change)
-            ind = np.where(lrs == epoch)[0]
+            ind = np.where(lrs == epoch)[0][0]
+            weight_vec = np.asarray(weight_vec)
             weight_vec[:] = args.alfaList[ind]
     return accuracys, losses
 
