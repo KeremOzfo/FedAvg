@@ -18,14 +18,19 @@ if __name__ == '__main__':
        print(arg, ':', getattr(args, arg))
     x = datetime.datetime.now()
     date = x.strftime('%b') + '-' + str(x.day)
-    newFile = date + '-sim_ID-' + str(simulation_ID)
+    simulation = '-ALG_{}-nesterov_{}'.format(args.alg,args.nesterov)
+    newFile = date + simulation + '-sim_ID-' + str(simulation_ID)
     if not os.path.exists(os.getcwd() + '/Results'):
         os.mkdir(os.getcwd() + '/Results')
     n_path = os.path.join(os.getcwd(), 'Results', newFile)
+    n_path_acc = n_path + '/acc'
+    n_path_loss = n_path + '/loss'
     for i in range(5):
         accs, loss = train(args, device)
         if i == 0:
             os.mkdir(n_path)
+            os.mkdir(n_path_acc)
+            os.mkdir(n_path_loss)
             f = open(n_path + '/simulation_Details.txt', 'w+')
             f.write('simID = ' + str(simulation_ID) + '\n')
             f.write('############## Args ###############' + '\n')
@@ -34,10 +39,10 @@ if __name__ == '__main__':
                 f.write(line + '\n')
             f.write('############ Results ###############' + '\n')
             f.close()
-        s_loc = date + f'federated_avg_acc{args.alfa}' + '--' + str(i)
-        s_loc2 = date + f'federated_avg_loss{args.alfa}' + '--' + str(i)
-        s_loc = os.path.join(n_path,s_loc)
-        s_loc2 = os.path.join(n_path, s_loc2)
+        s_loc = date + f'federated_avg_acc' + '--' + str(i)
+        s_loc2 = date + f'federated_avg_loss' + '--' + str(i)
+        s_loc = os.path.join(n_path_acc,s_loc)
+        s_loc2 = os.path.join(n_path_loss, s_loc2)
         np.save(s_loc,accs)
         np.save(s_loc2, loss)
         f = open(n_path + '/simulation_Details.txt', 'a+')
