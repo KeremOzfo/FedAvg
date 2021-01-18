@@ -216,8 +216,10 @@ def train_global(args, device):###not finished yet!
     for epoch in tqdm(range(psuedo_epochs)):
         if args.shuffle_dataset: ## shuffle
             sample_inds = dl.get_indices(trainset, args)
+
         if epoch in args.lr_change: ## decay LR
             currentLR *= 0.1
+
         if epoch in psuedo_alfa_change:
             ind = gamma_counter
             gamma_val = args.gammaList[ind]
@@ -225,18 +227,23 @@ def train_global(args, device):###not finished yet!
             gamma_counter +=1
             if args.synch: ##synch models
                 [sf.pull_model(user,net_ps) for user in net_users]
-        atWarmup = (args.warmUp and epoch < 5)
+
+
+        atWarmup = (args.warmUp and epoch < 5)## check Warmup Conditions
         if atWarmup:##change LR
             if epoch == 0:
                 currentLR = 0.1
             else:
                 lr_change = (args.lr - 0.1) / 4
                 currentLR = (lr_change * epoch) + 0.1
-        runs = 1 if num_client == 1 else int(max_H * psuedo_run / localIterCap)
+
+
+        runs = 1 if num_client == 1 else int(max_H * psuedo_run / localIterCap) ## calculate number of runs
         for run in range(runs):
 
             for cl in range(num_client):
                 localIter = 0
+                ## get local momentum value
                 localM = global_momentum.mul(1 / localIterCap) if args.alg == 3 \
                     else global_momentum.mul(args.beta / localIterCap)
 
