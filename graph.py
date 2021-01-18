@@ -8,18 +8,14 @@ from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
 def special_adress():
     adress=[]
     adress_loss = []
-    labels = ['\u03B1=0.85', '\u03B1=0.90', '\u03B1=0.95','\u03B1=1']
-
-
-    adress.append('Results/85/acc')
-    adress.append('Results/90/acc')
-    adress.append('Results/95/acc')
-    adress.append('Results/100/acc')
-
-    adress_loss.append('Results/85/loss')
-    adress_loss.append('Results/90/loss')
-    adress_loss.append('Results/95/loss')
-    adress_loss.append('Results/100/loss')
+    labels = []
+    #labels = ['\u03B1=0.85', '\u03B1=0.90', '\u03B1=0.95','\u03B1=1']
+    #labels = ['\u03B1=0,0.01,0.01','\u03B1=0,0.01,0.05', '\u03B1=0,0.05,0.05', '\u03B1=0,0.05,0.1','\u03B1=1']
+    a = 'Results/128bs/16w/16H/'
+    for dir in listdir(a):
+        adress.append(a+dir+'/acc')
+        adress_loss.append(a+dir + '/loss')
+        labels.append(dir)
     return adress,adress_loss,labels
 
 def compile_results(adress):
@@ -64,12 +60,14 @@ def graph(data, legends,interval):
     linestyle =['-', '--', '-.', ':']
     linecycler = cycle(linestyle)
     markercycler = cycle(marker)
+    epoch = 300
     for d,legend in zip(data,legends):
         x_axis = []
+        psuedo_epoch = len(d)
         l = next(linecycler)
         m = next(markercycler)
         for i in range(0,len(d)):
-            x_axis.append(i*interval)
+            x_axis.append(i*epoch/psuedo_epoch)
         plt.plot(x_axis,d, marker= m ,linestyle = l ,markersize=2, label=legend)
     #plt.axis([5, 45,70 ,90])
     #plt.axis([145,155,88,92])
@@ -88,14 +86,16 @@ def graph_loss(data, legends, interval):
     linestyle = ['-', '--', '-.', ':']
     linecycler = cycle(linestyle)
     markercycler = cycle(marker)
+    epoch = 300
     for d, legend in zip(data, legends):
         x_axis = []
         l = next(linecycler)
+        psuedo_epoch = len(d)
         m = next(markercycler)
         for i in range(0, len(d)):
-            x_axis.append(i * interval)
+            x_axis.append(i*epoch/psuedo_epoch)
         plt.plot(x_axis, d, marker=m, linestyle=l, markersize=2, label=legend)
-    plt.axis([0, 300, 0, 2])
+    plt.axis([0, 300, 0, 0.5])
     plt.xlabel('Epoch')
     plt.ylabel('Training Loss')
     plt.legend()
@@ -108,27 +108,15 @@ def concateresults(dirsets):
     all_results =[]
     for set in dirsets:
         all_results.append(compile_results(set)[0])
-        print(compile_results(set)[1])
     return all_results
 
 
 
-loc = 'Results/'
-types = ['benchmark','timeCorrelated','topk']
-NNs = ['simplecifar']
-
-locations = []
-labels =[]
-for tpye in types:
-    for nn in NNs:
-        locations.append(loc + tpye +'/'+nn)
-        labels.append(tpye +'--'+ nn)
-
 intervels = 1
+epoch  = 300
 labels = special_adress()[2]
 results = concateresults(special_adress()[0])
 results_loss = concateresults(special_adress()[1])
-print(results_loss)
 #results = concateresults(locations)
 graph(results,labels,intervels)
 graph_loss(results_loss,labels,intervels)

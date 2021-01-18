@@ -18,7 +18,7 @@ if __name__ == '__main__':
        print(arg, ':', getattr(args, arg))
     x = datetime.datetime.now()
     date = x.strftime('%b') + '-' + str(x.day)
-    simulation = '-ALG_{}-nesterov_{}'.format(args.alg,args.nesterov)
+    simulation = 'mode_{}-ALG_{}-shuffle_{}-H_{}{}'.format(args.mode,args.alg,args.shuffle_dataset,args.LocalIter,args.H_List)
     newFile = date + simulation + '-sim_ID-' + str(simulation_ID)
     if not os.path.exists(os.getcwd() + '/Results'):
         os.mkdir(os.getcwd() + '/Results')
@@ -26,7 +26,10 @@ if __name__ == '__main__':
     n_path_acc = n_path + '/acc'
     n_path_loss = n_path + '/loss'
     for i in range(5):
-        accs, loss = train(args, device)
+        if args.mode == 'global':
+            accs, loss = train_global(args, device)
+        else:
+            accs, loss = train(args, device)
         if i == 0:
             os.mkdir(n_path)
             os.mkdir(n_path_acc)
