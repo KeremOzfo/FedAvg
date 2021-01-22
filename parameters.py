@@ -38,7 +38,7 @@ def args_parser():
     parser.add_argument('--synch', type=bool, default=False, help='enable model synch at alfa change')
     parser.add_argument('--warmUp', type=bool, default=True, help='LR warm up.')
     
-    parser.add_argument('--WarmEpoch', type=int, default=5 help='Warmup_duration.')
+    parser.add_argument('--WarmEpoch', type=int, default=5, help='Warmup_duration.')
 
     args = parser.parse_args()
     return args
